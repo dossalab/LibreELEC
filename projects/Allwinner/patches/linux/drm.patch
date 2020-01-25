@@ -1,0 +1,28 @@
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index 5ae67d526b1d..a824b240d2c8 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -32,8 +32,13 @@ static int drm_sun4i_gem_dumb_create(struct drm_file *file_priv,
+ 				     struct drm_device *drm,
+ 				     struct drm_mode_create_dumb *args)
+ {
+-	/* The hardware only allows even pitches for YUV buffers. */
+-	args->pitch = ALIGN(DIV_ROUND_UP(args->width * args->bpp, 8), 2);
++	int min_pitch = DIV_ROUND_UP(args->width * args->bpp, 8);
++
++	/*
++	 * align to 64 bytes since Mali requires it.
++	 */
++	args->pitch = ALIGN(min_pitch, 64);
++	args->size = args->pitch * args->height;
+ 
+ 	return drm_gem_cma_dumb_create_internal(file_priv, drm, args);
+ }
+@@ -85,7 +104,6 @@ static int sun4i_drv_bind(struct device *dev)
+ 	}
+ 
+ 	drm_mode_config_init(drm);
+-	drm->mode_config.allow_fb_modifiers = true;
+ 
+ 	ret = component_bind_all(drm->dev, drm);
+ 	if (ret) {
