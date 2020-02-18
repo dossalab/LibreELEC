@@ -31,6 +31,10 @@ devices = {
         'dtb': 'sun50i-h5-orangepi-pc2.dtb',
         'config': 'orangepi_pc2_defconfig'
       },
+      'redbox5': {
+        'dtb': 'sun50i-h5-redbox5.dtb',
+        'config': 'redbox5_defconfig'
+      },
     },
     'H6': {
       'beelink-gs1' : {
